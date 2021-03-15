@@ -1,8 +1,10 @@
 const express = require("express");
-
+const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 
 const app = express();
+
+dotenv.config();
 
 const authenticateToken = (req, res, next) => {
   // Recuperar o header de autorização
@@ -13,7 +15,7 @@ const authenticateToken = (req, res, next) => {
   // Se não há token enviado pelo header
   if (token == null) return res.status(401).send("There's no token in header object");
 
-  jwt.verify(token, 'segredo123', (err, data) => {
+  jwt.verify(token, process.env.TOKEN_SECRET, (err, data) => {
     console.log(err);
 
     // Verifica se o token é válido
