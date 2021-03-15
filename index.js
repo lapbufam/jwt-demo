@@ -28,9 +28,7 @@ const authenticateToken = (req, res, next) => {
 
 }
 
-app.use(authenticateToken);
-
-app.get("/", (req, res) => {
+app.post("/", authenticateToken, (req, res) => {
   res.status(200).send("Hello world");
 })
 
