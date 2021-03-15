@@ -5,9 +5,14 @@ const jwt = require("jsonwebtoken");
 const app = express();
 
 const authenticateToken = (req, res, next) => {
-  // Recuperar o token a partir da requisição
+  // Recuperar o header de autorização
   const authHeader = req.headers["authorization"];
-  console.log(authHeader);
+  // Recuperar o token a partir da requisição
+  const token = authHeader && authHeader.split(' ')[1];
+
+  // Se não há token enviado pelo header
+  if(token == null) return res.status(401).send("There's no token in header object"); 
+
   next();
 }
 
