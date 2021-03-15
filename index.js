@@ -6,6 +6,22 @@ const app = express();
 
 dotenv.config();
 
+/**
+ * Função que assina o hash de um usuario com o segredo guardado no .env
+ * @param {*} username Objeto com os dados do usuário a ser assinado
+ * @returns Sem retorno
+ */
+const generateAccessToken = (username) => {
+  return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: "60s" });
+}
+
+/**
+ * Função que autentica o usuário da requisição
+ * @param {*} req Objeto que guarda as informações da requisição
+ * @param {*} res Objeto que será o retorno da requisição
+ * @param {*} next Função que executa a próxima função da pilha de middlewares do express.
+ * @returns Sem retorno
+ */
 const authenticateToken = (req, res, next) => {
   // Recuperar o header de autorização
   const authHeader = req.headers["authorization"];
@@ -30,6 +46,9 @@ const authenticateToken = (req, res, next) => {
 
 }
 
+/**
+ * Rota padrão da API
+ */
 app.post("/", authenticateToken, (req, res) => {
   res.status(200).send("Hello world");
 })
