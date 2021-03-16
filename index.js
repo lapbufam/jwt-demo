@@ -1,18 +1,22 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
-
+const bodyParser = require("body-parser")
 const app = express();
+
+app.use(bodyParser.json());
+
+app.use(bodyParser.urlencoded({ extended: false }));
 
 dotenv.config();
 
 /**
  * Função que assina o hash de um usuario com o segredo guardado no .env
- * @param {*} username Objeto com os dados do usuário a ser assinado
+ * @param {Object} username Objeto com os dados do usuário a ser assinado
  * @returns Sem retorno
  */
 const generateAccessToken = (username) => {
-  return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: "60s" });
+  return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '60s' });
 }
 
 /**
@@ -37,20 +41,22 @@ const authenticateToken = (req, res, next) => {
     // Verifica se o token é válido
     if (err) return res.status(403).send("You're not authorized to access this path.");
 
-    // Associa o usuário recuperado do banco ao usuario da requisição
-    req.user = user
-
     next();
 
-  })
+  });
 
 }
 
 /**
  * Rota padrão da API
  */
-app.post("/", authenticateToken, (req, res) => {
-  res.status(200).send("Hello world");
+app.get("/", authenticateToken, (req, res) => {
+  res.status(200).send("Welcome to JWT API");
 })
+
+app.post("/createUser", (req, res) => {
+  const token = generateAccessToken(req.body);
+  return res.json(token);
+});
 
 app.listen(3000);
